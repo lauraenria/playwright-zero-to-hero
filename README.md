@@ -169,6 +169,22 @@ Run a single test by its title (filter with -g):
 npx playwright test -g "has title" --project=chromium
 ```
 
+Run with tracing enabled (record full trace for debugging):
+```bash
+npx playwright test --project=chromium --trace on
+```
+
+Run with tracing only on the first retry of a failed test:
+```bash
+npx playwright test --project=chromium --trace on-first-retry
+```
+
+Run with tracing kept only when a test fails:
+
+```bash
+npx playwright test --project=chromium --trace retain-on-failure
+```
+
 Viewing Reports
 
 After the tests complete, you can view the interactive HTML report:
@@ -179,6 +195,104 @@ npx playwright show-report
 
 This will open a dashboard in your browser with detailed test results.
 
+
+## 📌 CLI Examples for Tracing
+
+Run with tracing always enabled (records every test):
+
+```bash
+npx playwright test --project=chromium --trace on
+```
+
+Run with tracing only on the **first retry** of a failed test:
+
+```bash
+npx playwright test --project=chromium --trace on-first-retry
+```
+
+Run with tracing kept **only when a test fails**:
+
+```bash
+npx playwright test --project=chromium --trace retain-on-failure
+```
+
+
+## 📖 Config File Examples
+
+In `playwright.config.ts`, you can configure tracing as well:
+
+```ts
+use: {
+  /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+  trace: 'on-first-retry',
+}
+```
+
+## 🔎 Trace Modes Explained
+
+* **`trace: 'on'`**
+  👉 Always records a trace for **all tests**, regardless of the outcome.
+
+  * Great for debugging locally.
+  * Downside: generates a lot of trace files and can take up disk space.
+
+* **`trace: 'on-first-retry'`**
+  👉 Records a trace **only if a test fails and is retried once**.
+
+  * Very common in CI/CD pipelines.
+  * Saves space but still provides debugging info when a test fails.
+
+* **`trace: 'retain-on-failure'`**
+  👉 Always records, but **keeps trace files only for failed tests**.
+
+  * Balanced option: you don’t lose data on failures, but you don’t keep useless traces for passing tests.
+
+
+📌 **In practice**:
+
+* Use **`on`** during **local development** when you want full visibility.
+* Use **`on-first-retry`** in **CI/CD pipelines** to reduce noise and storage usage.
+* Use **`retain-on-failure`** if you only care about traces for failed tests.
+
+
+### 🐛 Debugging from the Terminal
+
+Runs tests in Chromium with the Playwright Inspector, headed browser, no timeouts, and step-through debugging.
+
+```bash
+npx playwright test --project=chromium --debug
+```
+
+
+### 🐛 Debugging Playwright in VS Code
+
+Another way to debug is through **VS Code**:
+
+1. Open your test file in VS Code.
+2. Set a **breakpoint** by clicking in the left gutter (a red dot `●` appears).
+3. Start debugging:
+
+   * Use the Playwright Test extension, click **Debug** next to the test, or
+   * Run from terminal with `--debug` (VS Code will attach when it hits the breakpoint).
+4. When execution stops, use the **Debug toolbar** (top of the editor):
+
+   * **▶ Continue** – resume to the next breakpoint
+   * **⏸ Pause** – pause at the next opportunity
+   * **Step Over / Step Into / Step Out** – move line by line
+5. Use the left **Run and Debug** side panel to:
+
+   * Inspect **Variables** and their values
+   * View the **Call Stack** to see where execution is paused
+     * The Call Stack shows the chain of function calls that led to the current breakpoint.
+     * Click on any frame in the stack to:
+     * Jump to that part of the code.
+     * Inspect variables in that scope.
+     * See exactly how the execution flow reached the current point.
+   * Evaluate expressions in the **Debug Console**
+
+👉 In short: set a red breakpoint dot in VS Code, run Playwright in debug, then use VS Code’s debug controls to step through and inspect stack/variables.
+
+![alt text](/docs/images/Debugging%20Playwright%20in%20VS%20Code.png)
 
 ### Example Test
 
@@ -234,10 +348,10 @@ All configuration (browsers, timeouts, reporters, testDir, etc.) can be adjusted
 ✨ **MEEEEEEE!!!** (I’m learning Playwright step by step 💙)  
 …but also for:
 
-- 🐣 QA Engineers starting with Playwright  
-- 🔄 SDETs and Automation Engineers transitioning from other frameworks  
-- 👩‍💻 Developers who want to quickly understand Playwright best practices  
-- 🌱 Playwright beginners who want to grow their skills  
+- QA Engineers starting with Playwright  
+- SDETs and Automation Engineers transitioning from other frameworks
+- Developers who want to quickly understand Playwright best practices
+- 🌱 Playwright beginners who want to grow their skills
 
 
 ## 📄 License
